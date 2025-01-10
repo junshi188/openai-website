@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI 简单互动网页</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #e8e8e8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>与 军师 互动</h1>
+    </header>
+    <div class="container">
+        <textarea id="userInput" placeholder="请输入你的问题..."></textarea><br>
+        <button onclick="askAI()">提问</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function askAI() {
+            const userInput = document.getElementById("userInput").value;
+            const responseDiv = document.getElementById("response");
+
+            if (!userInput.trim()) {
+                responseDiv.innerHTML = "<strong>请先输入一个问题！</strong>";
+                return;
+            }
+
+            // 调用 OpenAI API
+            const response = await fetch("https://api.openai.com/v1/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `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` // 替换为你的 OpenAI API 密钥
+                },
+                body: JSON.stringify({
+                    model: "text-davinci-003", // 选择你想用的模型
+                    prompt: userInput,
+                    max_tokens: 150
+                })
+            });
+
+            const data = await response.json();
+            const aiResponse = data.choices[0].text.trim();
+            responseDiv.innerHTML = `<strong>OpenAI 回答：</strong> ${aiResponse}`;
+        }
+    </script>
+</body>
+</html>
